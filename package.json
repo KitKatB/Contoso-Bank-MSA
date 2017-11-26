@@ -1,0 +1,22 @@
+{
+  "name": "contoso-bank-msa",
+  "version": "1.0.0",
+  "description": "Contoso Bank MSA case",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KitKatB/Contoso-Bank-MSA.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KitKatB/Contoso-Bank-MSA/issues"
+  },
+  "homepage": "https://github.com/KitKatB/Contoso-Bank-MSA#readme",
+  "dependencies": {
+    "botbuilder": "^3.12.0"
+  }
+}
