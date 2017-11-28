@@ -7,7 +7,7 @@ exports.getAccounts = function getAccountsData(custnum,session){
 };
 
 function handleDisplayAccountsResponse(message, session){
-    console.log("AAAAAAAAAAAAAAAAAAAA");
+    
     var accounts = JSON.parse(message);
     var attachment = [];
     for (var index in accounts) {
@@ -32,3 +32,9 @@ function handleDisplayAccountsResponse(message, session){
     .attachments(attachment);
     session.send(message);
 }
+
+exports.openAccount = function openAccount(accname,session){
+    var url = "http://contosokb.azurewebsites.net/tables/contosoAccounts";
+    rest.sendNewAccountInformation(url,session,accname);
+}
+

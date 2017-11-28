@@ -41,13 +41,37 @@ exports.startDialog = function (bot) {
         }
     ]).triggerAction({matches: 'ManageAccount'});
 
+    bot.dialog('OpenAccount',[
+        function (session, args, next) {
+            session.dialogData.args = args || {};        
+            if (!session.conversationData["custnum"]) {
+                session.beginDialog("Verify")          
+            } else {
+                next();
+            }
+
+        },
+        function(session, results, next){
+            builder.Prompts.text(session,"What would you like to call this account?")
+               
+        },
+        function(session, results, next){
+             if (results.response) {
+                var accname = results.response;
+                account.openAccount(accname,session);
+             }
+             console.log("TTTTTTTTTTTTT");
+        }
+    ]).triggerAction({matches: 'OpenAccount'});
+
+
     bot.dialog('Verify', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["custnum"]) {
                 builder.Prompts.text(session, "Hi! Before we can start, please enter your customer number.");          
             } else {
-                next(); // Skip if we already have this info.
+                next(); 
             }
         },
 
@@ -57,11 +81,18 @@ exports.startDialog = function (bot) {
                     session.conversationData["custnum"] = results.response;
                 }
             //}
+            var url = "http://contosokb.azurewebsites.net/tables/contosoAccounts";
+            rest.getAccountInformation(url,session,assignOwnerName)
             session.send("Hi! Would you like to manage your accounts or bills?");
             //session.send(session.conversationData["custnum"]);
         },
 
     ])
 
+    function assignOwnerName(message,session){
+        var accounts = JSON.parse(message);
+        session.conversationData["custName"] = accounts[1].owner;
+        //session.send(session.conversationData["custName"]);
+    }
 
 }
