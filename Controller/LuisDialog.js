@@ -1,5 +1,6 @@
 var builder = require('botbuilder');
 var account = require('./Account');
+var rest = require('../API/Restclient');
 // Some sections have been omitted
 
 exports.startDialog = function (bot) {
@@ -14,9 +15,12 @@ exports.startDialog = function (bot) {
             if (!session.conversationData["custnum"]) {
                 session.beginDialog("Verify")          
             } else {
-                session.send("Hi! Would you like to manage your accounts or bills?")
+                next();
             }
         }
+        // function (session, args, next) {
+        //     session.send("Hi! Would you like to manage your accounts or bills?");
+        // }
 
     ]).triggerAction({matches: 'WelcomeIntent'});
 
@@ -26,10 +30,13 @@ exports.startDialog = function (bot) {
             if (!session.conversationData["custnum"]) {
                 session.beginDialog("Verify")          
             } else {
-                builder.Prompts.text(session,"Here are your current accounts. You can either transfer money between accounts, open a new account or pay someone with their account number.")
+                next();
             }
+
         },
         function(session, results, next){
+            console.log("CCCCCCCCCCCCCCC");
+            builder.Prompts.text(session,"Here are your current accounts. You can either transfer money between accounts, open a new account or pay someone with their account number.")
             account.getAccounts(session.conversationData["custnum"],session);
         }
     ]).triggerAction({matches: 'ManageAccount'});
@@ -50,7 +57,8 @@ exports.startDialog = function (bot) {
                     session.conversationData["custnum"] = results.response;
                 }
             //}
-            session.send(session.conversationData["custnum"]);
+            session.send("Hi! Would you like to manage your accounts or bills?");
+            //session.send(session.conversationData["custnum"]);
         },
 
     ])

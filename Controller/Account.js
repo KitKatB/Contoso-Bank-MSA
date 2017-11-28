@@ -3,10 +3,11 @@ var builder = require('botbuilder');
 
 exports.getAccounts = function getAccountsData(custnum,session){
     var url = "http://contosokb.azurewebsites.net/tables/contosoAccounts";
-    rest.getFavouriteFood(url, session, username, handleDisplayAccountsResponse)
+    rest.getAccountInformation(url, session, handleDisplayAccountsResponse)
 };
 
 function handleDisplayAccountsResponse(message, session){
+    console.log("AAAAAAAAAAAAAAAAAAAA");
     var accounts = JSON.parse(message);
     var attachment = [];
     for (var index in accounts) {
@@ -17,10 +18,13 @@ function handleDisplayAccountsResponse(message, session){
 
         var card = new builder.HeroCard(session)
             .title(accountName)
-            .subtitle(accountNumber)
-            .text(balance);
-
-        attachment.push(card);
+            .subtitle("Account Number: "+ accountNumber)
+            .text("Balance: $"+balance);
+        console.log(customerNumber);
+        if(customerNumber ===  session.conversationData["custnum"]){
+            attachment.push(card);
+        }
+        else{}
     }
 
     var message = new builder.Message(session)
