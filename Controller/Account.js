@@ -33,8 +33,7 @@ function handleDisplayAccountsResponse(message, session){
     session.send(message);
 }
 
-exports.openAccount = function openAccount(accname,session){
+exports.openAccount = function openAccount(session,accname){
     var url = "http://contosokb.azurewebsites.net/tables/contosoAccounts";
     rest.sendNewAccountInformation(url,session,accname);
 }
-

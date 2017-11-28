@@ -17,10 +17,10 @@ exports.startDialog = function (bot) {
             } else {
                 next();
             }
+        },
+        function (session, args, next) {
+            session.send("Hi! Would you like to manage your accounts or bills?");
         }
-        // function (session, args, next) {
-        //     session.send("Hi! Would you like to manage your accounts or bills?");
-        // }
 
     ]).triggerAction({matches: 'WelcomeIntent'});
 
@@ -52,13 +52,17 @@ exports.startDialog = function (bot) {
 
         },
         function(session, results, next){
-            builder.Prompts.text(session,"What would you like to call this account?")
-               
+            builder.Prompts.text("What would you like to name this account? Cancel this operation by sending 'cancel' instead.")
         },
-        function(session, results, next){
+        function (session, results, next){
              if (results.response) {
                 var accname = results.response;
-                account.openAccount(accname,session);
+                if(accname.toLowerCase()!= "cancel"){
+                    account.openAccount(session,accname);
+                }
+                else{
+                    session.send("Account opening cancelled.")
+                }
              }
              console.log("TTTTTTTTTTTTT");
         }
