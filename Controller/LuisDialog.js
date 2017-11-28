@@ -52,19 +52,19 @@ exports.startDialog = function (bot) {
 
         },
         function(session, results, next){
-            builder.Prompts.text("What would you like to name this account? Cancel this operation by sending 'cancel' instead.")
+            builder.Prompts.text(session,"What would you like to call this account? Type 'cancel' to stop opertaion.")
+               
         },
-        function (session, results, next){
+        function(session, results, next){
              if (results.response) {
                 var accname = results.response;
-                if(accname.toLowerCase()!= "cancel"){
-                    account.openAccount(session,accname);
+                if(accname.toLowerCase() != "cancel" ){
+                    account.openAccount(accname,session);
                 }
                 else{
                     session.send("Account opening cancelled.")
                 }
              }
-             console.log("TTTTTTTTTTTTT");
         }
     ]).triggerAction({matches: 'OpenAccount'});
 
