@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/KitKatB/Contoso-Bank-MSA#readme",
   "dependencies": {
-    "botbuilder": "^3.12.0"
+    "botbuilder": "^3.12.0",
+    "mathjs": "^3.17.0"
   }
 }

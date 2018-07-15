@@ -1,5 +1,6 @@
 var builder = require('botbuilder');
-//var account = require('./Account');
+var account = require('./Account');
+var rest = require('../API/Restclient');
 // Some sections have been omitted
 
 exports.startDialog = function (bot) {
@@ -14,19 +15,67 @@ exports.startDialog = function (bot) {
             if (!session.conversationData["custnum"]) {
                 session.beginDialog("Verify")          
             } else {
-                session.send("Hi! How can I help you?")
+                next();
             }
+        },
+        function (session, args, next) {
+            session.send("Hi! Would you like to manage your accounts or bills?");
         }
 
     ]).triggerAction({matches: 'WelcomeIntent'});
+
+    bot.dialog('ManageAccount', [
+        function (session, args, next) {
+            session.dialogData.args = args || {};        
+            if (!session.conversationData["custnum"]) {
+                session.beginDialog("Verify")          
+            } else {
+                next();
+            }
+
+        },
+        function(session, results, next){
+            console.log("CCCCCCCCCCCCCCC");
+            builder.Prompts.text(session,"Here are your current accounts. You can either transfer money between accounts, open a new account or pay someone with their account number.")
+            account.getAccounts(session.conversationData["custnum"],session);
+        }
+    ]).triggerAction({matches: 'ManageAccount'});
+
+    bot.dialog('OpenAccount',[
+        function (session, args, next) {
+            session.dialogData.args = args || {};        
+            if (!session.conversationData["custnum"]) {
+                session.beginDialog("Verify")          
+            } else {
+                next();
+            }
+
+        },
+        function(session, results, next){
+            builder.Prompts.text(session,"What would you like to call this account? Type 'cancel' to stop opertaion.")
+               
+        },
+        function(session, results, next){
+             if (results.response) {
+                var accname = results.response;
+                if(accname.toLowerCase() != "cancel" ){
+                    account.openAccount(accname,session);
+                }
+                else{
+                    session.send("Account opening cancelled.")
+                }
+             }
+        }
+    ]).triggerAction({matches: 'OpenAccount'});
+
 
     bot.dialog('Verify', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["custnum"]) {
-                builder.Prompts.text(session, "Hi! Before I can help, please enter your customer number.");          
+                builder.Prompts.text(session, "Hi! Before we can start, please enter your customer number.");          
             } else {
-                next(); // Skip if we already have this info.
+                next(); 
             }
         },
 
@@ -36,10 +85,18 @@ exports.startDialog = function (bot) {
                     session.conversationData["custnum"] = results.response;
                 }
             //}
-            session.send(session.conversationData["custnum"]);
+            var url = "http://contosokb.azurewebsites.net/tables/contosoAccounts";
+            rest.getAccountInformation(url,session,assignOwnerName)
+            session.send("Hi! Would you like to manage your accounts or bills?");
+            //session.send(session.conversationData["custnum"]);
         },
 
     ])
 
+    function assignOwnerName(message,session){
+        var accounts = JSON.parse(message);
+        session.conversationData["custName"] = accounts[1].owner;
+        //session.send(session.conversationData["custName"]);
+    }
 
 }
